@@ -1,36 +1,75 @@
 import React, { Component } from 'react'
 import Factory from './Factory'
+import Dialog  from '@material-ui/core/Dialog'
+import { withStyles } from '@material-ui/core/styles'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import Button from '@material-ui/core/Button'
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import TextField from '@material-ui/core/TextField'
 
 export default class Dashboard extends Component {
 
 	constructor() {
 		super()
 		this.state = {
-			factories : []
+			factories : [],
+			open : false,
+			factory : {
+				name : '',
+				children : [],
+				min : 0,
+				max : 0,
+				numChild : 0,
+			}
 		}
 	}
 
-	//Create New Factory 
-	showCreateFactory() {
-		return (
-			<dialog>
-				<form>
+	handleInputChange = (event) => {
+		const target = event.target 
+		const value = target.value 
+		let  factory = { ...this.state.factory }
+		const name = target.name 
+		factory[name] = value 
 
-					<label for='name'> Name </label>
-					<input id='name' type='text' name='name'> </input>
-					<label for='max'> Max </label>
-					<input id='max' type='number' name='max'></input>
-					<label for='min'> Min </label>
-					<input id='min' type='number' name='min'></input>
-					<label for='children'> Children </label>
-					<input id='children' type='number' name='children'></input>
+		this.setState({
 
-				</form>
-			</dialog>
-		)
+			factory
+		})
 	}
 
+	//Save Factory 
+
+	save = () => {
+
+		const { factory, factories } = { ...this.state } 
+		factories.push(factory)
+
+		this.setState({
+			factories : factories,
+			factory : {},
+			open : false 
+		})
+		
+	}
+
+	//Create New Factory 
+	showCreateFactory = () => {
+		this.setState({ open : true })
+	}
+
+	closeCreateFactory = () => {
+		this.setState({ open : false })
+	}
+
+
 	render() {
+		const factories = this.state.factories
+		const factoryItems = factories.map(factory => (
+			<li> <Factory factory={factory} /> </li>
+
+		))
+
 		return (
 			<section>
 				<h3> Dashboard </h3>
@@ -38,9 +77,64 @@ export default class Dashboard extends Component {
 
 					Root 
 					<button onClick={ this.showCreateFactory }> Add Factory </button>
-					<Factory />
+					
+					<ul> { factoryItems } </ul>
+					<Dialog  open={ this.state.open } modal={true}>
+						<DialogTitle> Add New Factory </DialogTitle>
+						<DialogContent>
+							<TextField
+					              autoFocus
+					              margin="dense"
+					              id="name"
+					              name='name'
+					              label="name"
+					              type="text"
+					              onChange = { this.handleInputChange }
 
+					              
+					        />
+							<TextField
+					              autoFocus
+					              margin="dense"
+					              id="max"
+					              name='max'
+					              label="max"
+					              type="number"
+					              onChange = { this.handleInputChange }
 
+					              
+					        />
+							<TextField
+					              autoFocus
+					              margin="dense"
+					              id="min"
+					              label="min"
+					              type="number"
+					              name='min'
+					              onChange = { this.handleInputChange }
+
+					              
+					         />
+							<TextField
+					              autoFocus
+					              margin="dense"
+					              id="children"
+					              name='numChild'
+					              label="# of children"
+					              type="number"
+					              onChange = { this.handleInputChange }
+					         
+					         />
+						</DialogContent>
+						 <DialogActions>
+            			<Button onClick={this.closeCreateFactory } color="primary">
+              					Cancel
+           				 </Button>
+			            <Button onClick={this.save} color="primary">
+			              Save
+			              </Button>
+          				</DialogActions>
+					</Dialog>
 				</article>
 			</section>
 
