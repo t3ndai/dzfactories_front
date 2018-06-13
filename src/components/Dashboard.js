@@ -67,10 +67,8 @@ export default class Dashboard extends Component {
 		const factory = factories[index]
 		factory['min'] = min
 		factory['name'] = name
-		factories['max'] = max
-		console.log(index)
-		console.log(factory)
-		
+		factory['max'] = max
+
 		const new_factories = Object.assign([], factories, { index: factory})		
 
 		this.setState({
@@ -80,8 +78,20 @@ export default class Dashboard extends Component {
 	}
 
 	//generate 
-	generate = () => {
+	generate = (index,children) => {
 		//set state of factory in factories 
+
+		console.log(index,children)
+
+		const factories = this.state.factories
+		const factory = factories[index]
+		factory['children'] = children
+
+		const new_factories = Object.assign([], factories, { index : factory })
+
+		this.setState({
+			factories : new_factories
+		})
 
 	}
 
@@ -99,7 +109,7 @@ export default class Dashboard extends Component {
 	render() {
 		const factories = this.state.factories
 		const factoryItems = factories.map((factory, index) => (
-			<li key={factory.key} data-id={index}><Factory factory={factory} edit={ this.edit } index={index} /> </li>
+			<li key={factory.key} data-id={index}><Factory factory={factory} edit={ this.edit } index={index} generate={ this.generate } /> </li>
 
 		))
 

@@ -81,9 +81,13 @@ export default class Factory extends Component {
 			children.push(randomChild)
 		} 
 
+		const index = this.props.index
+		this.props.generate(index,children)
+
 		this.setState({
 			children : children
 		})
+		
 
 	}
 
