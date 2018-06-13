@@ -27,7 +27,7 @@ export default class Dashboard extends Component {
 
 	handleInputChange = (event) => {
 		const target = event.target 
-		const value = target.value 
+		const value = target.type === 'number' ? parseInt(target.value) : target.value
 		let  factory = { ...this.state.factory }
 		const name = target.name 
 		factory[name] = value 
@@ -47,11 +47,44 @@ export default class Dashboard extends Component {
 
 		this.setState({
 			factories : factories,
-			factory : {},
+			factory : {
+						name : '',
+						children : [],
+						min : 0,
+						max : 0,
+						numChild : 0,
+					},
 			open : false 
 		})
 		
 	}
+
+	//Edit Factory 
+	edit = (index,name, max, min) => {
+		//when you click edit you need to identify factory 
+		
+		const factories = this.state.factories
+		const factory = factories[index]
+		factory['min'] = min
+		factory['name'] = name
+		factories['max'] = max
+		console.log(index)
+		console.log(factory)
+		
+		const new_factories = Object.assign([], factories, { index: factory})		
+
+		this.setState({
+			factories : new_factories
+		})
+
+	}
+
+	//generate 
+	generate = () => {
+		//set state of factory in factories 
+
+	}
+
 
 	//Create New Factory 
 	showCreateFactory = () => {
@@ -65,8 +98,8 @@ export default class Dashboard extends Component {
 
 	render() {
 		const factories = this.state.factories
-		const factoryItems = factories.map(factory => (
-			<li> <Factory factory={factory} /> </li>
+		const factoryItems = factories.map((factory, index) => (
+			<li key={factory.key} data-id={index}><Factory factory={factory} edit={ this.edit } index={index} /> </li>
 
 		))
 
@@ -122,6 +155,7 @@ export default class Dashboard extends Component {
 					              name='numChild'
 					              label="# of children"
 					              type="number"
+					              max="15"
 					              onChange = { this.handleInputChange }
 					         
 					         />

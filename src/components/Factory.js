@@ -12,12 +12,12 @@ export default class Factory extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			id : 1,
+			id : 0,
 			name : 'new',
-			children : [12,13,5],
-			min : 1,
-			max : 15,
-			numChild : 3,
+			children : [],
+			min : '',
+			max : '',
+			numChild : 0,
 			open : false 
 		}
 	}
@@ -35,7 +35,11 @@ export default class Factory extends Component {
 
 	//edit 
 	showEditFactory = () => {
+
+		
 		this.setState({ open : true })
+
+			
 	}
 
 	closeEditFactory = () => {
@@ -44,13 +48,18 @@ export default class Factory extends Component {
 
 	//save
 	save = () => {
+
+		const {name, max, min} = { ...this.state }
+		const index = this.props.index
+		this.props.edit(index, name, max, min)
+		
 		this.closeEditFactory()
 	}
 
 	//handleInput 
 	handleInputChange = (event) => {
 		const target = event.target 
-		const value = target.value 
+		const value = target.type === 'number' ? parseInt(target.value) : target.value
 		const name = target.name 
 
 		this.setState({
