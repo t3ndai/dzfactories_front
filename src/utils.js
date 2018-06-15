@@ -63,6 +63,34 @@ export async function patchData(url, data) {
   }
 }
 
+export async function deleteData(url, data) {
+  
+  //console.log(JSON.stringify(data))
+  
+  try {
+    
+    let response = await fetch(url, {
+      headers : { 'Content-Type' : 'application/json' },
+      body : JSON.stringify(data),
+      method : 'DELETE',
+      mode : 'cors'
+      
+    })
+    
+    return await handleResponse(response)
+    
+  }catch(err) {
+    
+    if (err instanceof AuthorizationError ) {
+      throw new AuthorizationError(err.message)
+    }else if (err instanceof InputError ) {
+      throw new InputError(err.message)
+    }
+    
+  }
+}
+
+
 export async function getData(url) {
 	
 	try {

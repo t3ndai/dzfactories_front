@@ -8,7 +8,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField'
 import io from 'socket.io-client'
 import { API_URL } from '../config'
-import { postData, patchData, getData } from '../utils'
+import { postData, patchData, getData, deleteData } from '../utils'
 
 const socket = io(API_URL)
 
@@ -135,6 +135,18 @@ export default class Factory extends Component {
 
 	}
 
+	remove = () => {
+		const { factory_id } = { ...this.state }
+
+		const factory = {
+			factory_id : factory_id
+		}
+
+		deleteData(API_URL+'factories', factory)
+			.catch((err) => console.log(err))
+
+	}
+
 
 
 	render() {
@@ -155,6 +167,7 @@ export default class Factory extends Component {
 
 				<button onClick={ this.showEditFactory }> Edit Me </button>
 				<button onClick={ this.generate }> Generate </button>
+				<button onClick={ this.remove }> Delete Me </button>
 					<Dialog  open={ this.state.open } modal={true}>
 						<DialogTitle> Add New Factory </DialogTitle>
 						<DialogContent>
