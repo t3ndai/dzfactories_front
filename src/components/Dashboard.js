@@ -144,7 +144,7 @@ export default class Dashboard extends Component {
 
 
 	render() {
-		const factories = this.state.factories
+		const factories = this.state.factories || []
 		const factoryItems = factories.map((factory, index) => (
 			<li key={factory.key} data-id={index}><Factory factory={factory} edit={ this.edit } index={index} /> </li>
 
