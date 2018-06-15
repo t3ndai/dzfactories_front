@@ -6,14 +6,19 @@ import Button from '@material-ui/core/Button'
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField'
+import io from 'socket.io-client'
+import { API_URL } from '../config'
+import { postData, patchData, getData } from '../utils'
+
+const socket = io(API_URL)
 
 export default class Factory extends Component {
 
 	constructor(props) {
 		super(props)
 		this.state = {
-			id : 0,
-			name : 'new',
+			factory_id : 0,
+			name : '',
 			children : [],
 			min : '',
 			max : '',
@@ -23,14 +28,29 @@ export default class Factory extends Component {
 	}
 
 	componentDidMount = () => {
-		let { name, max, min, children, numChild } = { ...this.props.factory }
+		let { factory_id, name, max, min, children, numchild } = { ...this.props.factory }
 		this.setState({
+			factory_id : factory_id,
 			name : name,
 			max : max,
 			min : min,
 			children : children,
-			numChild : numChild,
+			numChild : numchild,
 		})
+	}
+
+	componentDidUpdate = (prevProps) => {
+	  	if (prevProps.factory !==  this.props.factory) {
+			let { factory_id, name, max, min, children, numchild } = { ...this.props.factory }
+			this.setState({
+				factory_id : factory_id,
+				name : name,
+				max : max,
+				min : min,
+				children : children,
+				numchild : numchild,
+			})
+		}
 	}
 
 	//edit 
@@ -49,9 +69,22 @@ export default class Factory extends Component {
 	//save
 	save = () => {
 
-		const {name, max, min} = { ...this.state }
+		const {factory_id, name, max, min} = { ...this.state }
 		const index = this.props.index
 		this.props.edit(index, name, max, min)
+
+		const factory = {
+			factory_id : factory_id,
+			name : name,
+			max : max,
+			min : min,
+		}
+
+		//console.log(factory)
+
+		patchData(API_URL+'factories', factory)
+			.then((res) => console.log(res))
+			.catch((err) => console.log(err))
 		
 		this.closeEditFactory()
 	}
@@ -70,19 +103,30 @@ export default class Factory extends Component {
 
 	//generate
 	generate = () => {
-		let { max, min, numChild } = { ...this.state }
+		let { factory_id, max, min, numchild } = { ...this.state }
 		const children = []
+
+		console.log(factory_id, max, min, numchild)
 		min = Math.ceil(min)
 		max = Math.ceil(max)
 
-		while (children.length < numChild) {
+		while (children.length < numchild) {
 			let randomChild = Math.floor(Math.random() * (max - min + 1))
 
 			children.push(randomChild)
 		} 
 
 		const index = this.props.index
-		this.props.generate(index,children)
+		//this.props.generate(index,children)
+
+		const factory = {
+			factory_id : factory_id,
+			children : children
+		}
+
+		patchData(API_URL+'factories', factory)
+			.then((res) => console.log(res))
+			.catch((err) => console.log(err))
 
 		this.setState({
 			children : children

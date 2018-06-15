@@ -7,6 +7,11 @@ import Button from '@material-ui/core/Button'
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import TextField from '@material-ui/core/TextField'
+import io from 'socket.io-client'
+import { API_URL } from '../config'
+import { postData, patchData, getData } from '../utils'
+
+const socket = io(API_URL)
 
 export default class Dashboard extends Component {
 
@@ -25,6 +30,27 @@ export default class Dashboard extends Component {
 		}
 	}
 
+	//Factory state set by sockets 
+	componentDidMount = () => {
+
+		getData(API_URL+'factories')
+			.then(factories => {
+				this.setState({
+					factories : factories,
+				})
+			})
+
+		socket.on('new_factories', (new_factories) => {
+			console.log(new_factories)
+			this.setState({
+				factories : new_factories
+			})
+
+		})
+
+	}
+
+
 	handleInputChange = (event) => {
 		const target = event.target 
 		const value = target.type === 'number' ? parseInt(target.value) : target.value
@@ -32,6 +58,7 @@ export default class Dashboard extends Component {
 		const name = target.name 
 		factory[name] = value 
 
+		//plug in sockets here 
 		this.setState({
 
 			factory
@@ -45,6 +72,14 @@ export default class Dashboard extends Component {
 		const { factory, factories } = { ...this.state } 
 		factories.push(factory)
 
+		socket.emit('factories', factories)
+
+	    postData(API_URL+'factories', factory)
+	   		.then((res) => console.log(res))
+	   		.catch((err) => console.log(err))
+		
+		
+		//plug in sockets here 
 		this.setState({
 			factories : factories,
 			factory : {
@@ -71,6 +106,8 @@ export default class Dashboard extends Component {
 
 		const new_factories = Object.assign([], factories, { index: factory})		
 
+		//plug in sockets here 
+
 		this.setState({
 			factories : new_factories
 		})
@@ -81,13 +118,13 @@ export default class Dashboard extends Component {
 	generate = (index,children) => {
 		//set state of factory in factories 
 
-		console.log(index,children)
-
 		const factories = this.state.factories
 		const factory = factories[index]
 		factory['children'] = children
 
 		const new_factories = Object.assign([], factories, { index : factory })
+
+		//plug in sockets here 
 
 		this.setState({
 			factories : new_factories
@@ -109,7 +146,7 @@ export default class Dashboard extends Component {
 	render() {
 		const factories = this.state.factories
 		const factoryItems = factories.map((factory, index) => (
-			<li key={factory.key} data-id={index}><Factory factory={factory} edit={ this.edit } index={index} generate={ this.generate } /> </li>
+			<li key={factory.key} data-id={index}><Factory factory={factory} edit={ this.edit } index={index} /> </li>
 
 		))
 
