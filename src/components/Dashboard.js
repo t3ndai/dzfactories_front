@@ -204,6 +204,9 @@ export default class Dashboard extends Component {
 					              type="number"
 					              max="15"
 					              onChange = { this.handleInputChange }
+					              inputProps = {{
+					              	'max':'15'
+					              }}
 					         
 					         />
 						</DialogContent>

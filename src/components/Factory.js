@@ -9,6 +9,9 @@ import TextField from '@material-ui/core/TextField'
 import io from 'socket.io-client'
 import { API_URL } from '../config'
 import { postData, patchData, getData, deleteData } from '../utils'
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 
 const socket = io(API_URL)
 
