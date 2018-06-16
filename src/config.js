@@ -1,1 +1,1 @@
-export const API_URL = 'http://104.236.112.212:8081/' 
+export const API_URL = 'http://api.dzfactories.tk/' 
